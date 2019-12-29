@@ -57,6 +57,7 @@
 
 .recipe-img {
   height: 70%;
+  min-height: 200px;
 
   @media (max-width: 1200px) {
     height: auto;

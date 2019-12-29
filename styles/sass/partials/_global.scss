@@ -144,3 +144,22 @@ footer {
   flex-wrap: wrap;
   justify-content: space-between;
 }
+
+// loading screen
+.loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(to bottom, $darkRed 50%, $black);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  p {
+    font-size: 1.2rem;
+    margin-top: 0;
+  }
+}

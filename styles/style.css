@@ -403,6 +403,31 @@ footer p {
           justify-content: space-between;
 }
 
+.loading-screen {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  text-align: center;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(50%, #600910), to(#000));
+  background: linear-gradient(to bottom, #600910 50%, #000);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.loading-screen p {
+  font-size: 1.2rem;
+  margin-top: 0;
+}
+
 form {
   -webkit-box-align: center;
       -ms-flex-align: center;
@@ -624,6 +649,7 @@ select:hover, select:focus {
 
 .recipe-img {
   height: 70%;
+  min-height: 200px;
 }
 
 @media (max-width: 1200px) {
