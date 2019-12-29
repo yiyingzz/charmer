@@ -458,12 +458,6 @@ form {
           filter: drop-shadow(0 0 5px #da3052);
 }
 
-.fa-chevron-down {
-  font-size: 1.8rem;
-  display: block;
-  cursor: pointer;
-}
-
 .fa-stack {
   width: 180px;
   -webkit-box-pack: center;

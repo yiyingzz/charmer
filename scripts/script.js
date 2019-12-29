@@ -55,15 +55,15 @@ app.setMovieReleaseDate = function() {
 };
 
 // method to print movies to page
-app.printMoviesToPage = function(title, year, imgUrl, blurb, id) {
+app.printMoviesToPage = function(movie, year, blurb) {
   const movieHtml = `
         <div class="movie-card flex-container" data-aos="fade-up" data-aos-duration="500">
             <div class="movie-img">
-                <img src="${app.movieImgUrl}${imgUrl}" alt="Movie poster for ${title}">
+                <img src="${app.movieImgUrl}${movie.poster_path}" alt="Movie poster for ${movie.title}">
             </div>
             <div class="card-text">
-                <p class="card-title">${title} <span class="movie-year">(${year})</span></p>
-                <p>${blurb}... <a href="${app.movieInfoUrl}${id}">Read more</a></p>
+                <p class="card-title">${movie.title} <span class="movie-year">(${year})</span></p>
+                <p>${blurb}... <a href="${app.movieInfoUrl}${movie.id}">Read more</a></p>
             </div>
         </div>
     `;
@@ -71,28 +71,19 @@ app.printMoviesToPage = function(title, year, imgUrl, blurb, id) {
 };
 
 // method to print recipes to page
-app.printRecipesToPage = function(
-  title,
-  imgUrl,
-  readyTime,
-  steps,
-  ingredients,
-  dishTypes,
-  wines,
-  url
-) {
+app.printRecipesToPage = function(recipe, readyTime, dishTypes, wines) {
   const recipeHtml = `
         <div class="recipe-card flex-container" data-aos="fade-up" data-aos-duration="500">
             <div class="recipe-img">
-                <img src="${imgUrl}" alt="${title}">
+                <img src="${recipe.image}" alt="${recipe.title}">
             </div>
             <div class="card-text">
-                <p class="card-title">${title}</p>
+                <p class="card-title">${recipe.title}</p>
                 <p>Ready in ${readyTime}</p>
-                <p>${steps.length} steps, ${ingredients.length} ingredients</p>
+                <p>${recipe.analyzedInstructions[0].steps.length} steps, ${recipe.extendedIngredients.length} ingredients</p>
                 ${dishTypes}
                 ${wines}
-                <p><a href="${url}">Go to recipe</a></p>
+                <p><a href="${recipe.sourceUrl}">Go to recipe</a></p>
             </div>
         </div>
     `;
@@ -155,11 +146,100 @@ app.getWinePairings = function(wineList) {
   }
 };
 
+// method for prepping movie results for displaying them on the pate
+app.prepMovieResults = function(movieResults) {
+  console.log("it's working!");
+  $(".movie-results").empty();
+  for (let i = 0; i < 4; i++) {
+    const movie = movieResults[i];
+    const movieYear = movie.release_date.slice(0, 4);
+
+    // making the movie blurbs a bit shorter so they don't stretch the page
+    const movieBlurb = movie.overview.slice(0, 241);
+
+    app.printMoviesToPage(movie, movieYear, movieBlurb);
+  } // end of for loop - movies
+};
+
+// method for prepping recipe results for displaying them on the page
+app.prepRecipeResults = function(recipeResults) {
+  console.log("it's working!2");
+  $(".recipe-results").empty();
+  for (let i = 0; i < 4; i++) {
+    const recipe = recipeResults[i];
+    const readyTime = app.getRecipeReadyTime(recipe.readyInMinutes);
+
+    // get dish types & wine pairings for each recipe, if available
+    const dishTypeHtml = app.getDishType(recipe.dishTypes);
+    const wineHtml = app.getWinePairings(recipe.winePairing.pairedWines);
+
+    app.printRecipesToPage(recipe, readyTime, dishTypeHtml, wineHtml);
+  } // end of for loop - recipes
+};
+
+// method for using Promises in AJAX calls
+app.makeApiCalls = function(
+  usersGenreChoice,
+  moviePage,
+  movieReleaseDate,
+  usersFoodChoice
+) {
+  $.when(
+    app.getMovies(usersGenreChoice, moviePage, movieReleaseDate),
+    app.getRecipes(usersFoodChoice)
+  )
+    .then(function(movieChoices, recipeChoices) {
+      $(".loading-screen").hide();
+      $("h3").show();
+      $(".search-again").show();
+      $("footer").show();
+
+      $("html, body").animate(
+        {
+          scrollTop: $("#results").offset().top
+        },
+        500
+      );
+
+      // prep results for printing to page
+      app.prepMovieResults(movieChoices[0].results);
+      app.prepRecipeResults(recipeChoices[0].recipes);
+
+      $("#food-search").val(""); // reset inputs
+      $("#genre-search").val(28);
+    })
+    .fail(function(error) {
+      alert("Sorry, no results found! Please try another search.");
+    });
+};
+
+app.checkFormInputs = function(usersFoodChoice, usersGenreChoice) {
+  if (usersFoodChoice === "") {
+    alert("Please make sure you entered a recipe to search and a movie genre!");
+  } else {
+    $("h3").hide();
+    $(".search-again").hide();
+    $("footer").hide();
+    $(".loading-screen").show();
+
+    // use Math.random() to add some randomization to the movie results
+    const moviePage = Math.ceil(Math.random() * 100);
+    app.setMovieReleaseDate();
+
+    // make API calls & then print results
+    app.makeApiCalls(
+      usersGenreChoice,
+      moviePage,
+      app.movieReleaseDate,
+      usersFoodChoice
+    );
+  }
+};
+
 app.init = function() {
   /*
         METHODS THAT NEED TO INITIALIZE
     */
-  $(".fa-chevron-down").hide();
   $("h3").hide();
   $(".search-again").hide();
   $("footer").hide();
@@ -171,88 +251,15 @@ app.init = function() {
   // submit a search
   $("form").on("submit", function(e) {
     e.preventDefault();
-    $(".loading-screen").show();
+
+    // get user's choices
     app.usersFoodChoice = $("#food-search")
       .val()
       .toLowerCase();
     app.usersGenreChoice = parseInt($("#genre-search").val());
 
-    if (app.usersFoodChoice === "") {
-      alert(
-        "Please make sure you entered a recipe to search and a movie genre!"
-      );
-    } else {
-      // use Math.random() to add some randomization to the movie results
-      const moviePage = Math.ceil(Math.random() * 100);
-      app.setMovieReleaseDate();
-
-      // using Promises to wait for both movie & recipe API calls
-      $.when(
-        app.getMovies(app.usersGenreChoice, moviePage, app.movieReleaseDate),
-        app.getRecipes(app.usersFoodChoice)
-      )
-        .then(function(movieChoices, recipeChoices) {
-          $(".loading-screen").hide();
-          $("h3").show();
-          $(".search-again").show();
-          $("footer").show();
-
-          $("html, body").animate(
-            {
-              scrollTop: $("#results").offset().top
-            },
-            500
-          );
-
-          // printing movies to page
-          $(".movie-results").empty();
-          for (let i = 0; i < 4; i++) {
-            const movie = movieChoices[0].results[i];
-            const movieYear = movie.release_date.slice(0, 4);
-
-            // making the movie blurbs a bit shorter so they don't stretch the page
-            const movieBlurb = movie.overview.slice(0, 241);
-
-            app.printMoviesToPage(
-              movie.title,
-              movieYear,
-              movie.poster_path,
-              movieBlurb,
-              movie.id
-            );
-          } // end of for loop - movies
-
-          // printing recipes to page
-          $(".recipe-results").empty();
-          for (let i = 0; i < 4; i++) {
-            const recipe = recipeChoices[0].recipes[i];
-            const readyTime = app.getRecipeReadyTime(recipe.readyInMinutes);
-
-            // get dish types & wine pairings for each recipe, if available
-            const dishTypeHtml = app.getDishType(recipe.dishTypes);
-            const wineHtml = app.getWinePairings(
-              recipe.winePairing.pairedWines
-            );
-
-            app.printRecipesToPage(
-              recipe.title,
-              recipe.image,
-              readyTime,
-              recipe.analyzedInstructions[0].steps,
-              recipe.extendedIngredients,
-              dishTypeHtml,
-              wineHtml,
-              recipe.sourceUrl
-            );
-          } // end of for loop - recipes
-
-          $("#food-search").val(""); // reset inputs
-          $("#genre-search").val(28);
-        })
-        .fail(function(error) {
-          alert("Sorry, no results found! Please try another search.");
-        });
-    } // end of if-else for checking inputs/getting results
+    // make sure the user has made choices & didn't leave a blank input
+    app.checkFormInputs(app.usersFoodChoice, app.usersGenreChoice);
   }); // end of form submit event handler
 
   // changing the heart icon to utensils on hover when searching recipes
