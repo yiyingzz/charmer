@@ -1,108 +1,108 @@
 form {
-    align-items: center;
+  align-items: center;
 
-    @media (max-width: 940px) {
-        flex-direction: column;
-        align-content: center;
-    }
+  @media (max-width: 940px) {
+    flex-direction: column;
+    align-content: center;
+  }
 }
 
 .fa-circle {
-    color: #fff;
-    font-size: 6rem;
+  font-size: 6rem;
 }
 
 .fa-heart,
 .fa-utensils,
 .fa-film {
-    font-size: 3rem;
-    color: #6c0b11;
-    filter: drop-shadow(0 0 5px #da3052);
+  font-size: 3rem;
+  color: $darkRed;
+  filter: drop-shadow(0 0 5px $pink);
 }
 
 .fa-chevron-down {
-    font-size: 1.8rem;
-    display: block;
-    cursor: pointer;
+  font-size: 1.8rem;
+  display: block;
+  cursor: pointer;
 }
 
 // icon container div for the circle & icons in the middle
 .fa-stack {
-    width: 180px;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    top: 40px;
+  width: 180px;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  top: 40px;
 
-    @media (max-width: 940px) {
-        margin: 50px auto;
-        padding: 30px;
-        top: 5px;
-    }
+  @media (max-width: 940px) {
+    margin: 50px auto;
+    padding: 30px;
+    top: 5px;
+  }
 }
 
 label {
-    display: block;
-    margin-bottom: 10px;
-    font-size: 1.4rem;
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1.4rem;
 
-    @media (max-width: 480px) {
-        font-size: 1rem;
-    }
+  @media (max-width: 480px) {
+    font-size: 1rem;
+  }
 }
 
 .food-search-container,
 .genre-search-container {
-    width: calc(50% - 180px / 2);
+  width: calc(50% - 180px / 2);
 
-    @media (max-width: 940px) {
-        width: 100%;
-    }
+  @media (max-width: 940px) {
+    width: 100%;
+  }
 }
 
 .food-search-container {
-    text-align: right;
+  text-align: right;
 
-    @media (max-width: 940px) {
-        text-align: center;
-    }
+  @media (max-width: 940px) {
+    text-align: center;
+  }
 }
 
 .genre-search-container {
-    text-align: left;
+  text-align: left;
 
-    @media (max-width: 940px) {
-        text-align: center;
-    }
+  @media (max-width: 940px) {
+    text-align: center;
+  }
 }
 
-input, 
+input,
 select {
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    appearance: none;
-    border: 0;
-    border-radius: 25px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.8);
-    color: #000;
-    width: 100%;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  border: 0;
+  border-radius: 25px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.8);
+  color: $black;
+  width: 100%;
 }
 
 input:hover,
 input:focus {
-    background: #fff;
+  background: $white;
 }
 
 select {
-    background-image: url('../assets/arrow-down.png');
-    background-repeat: no-repeat;
-    background-position: 96% center;
+  background-image: url("../assets/arrow-down.png");
+  background-repeat: no-repeat;
+  background-position: 96% center;
 
-    &:hover,
-    &:focus {
-        background-image: url('../assets/arrow-down.png'), linear-gradient(to right, #fff, #fff);
-        background-repeat: no-repeat, repeat;
-        background-position: 96% center, top left;
-    }
+  &:hover,
+  &:focus {
+    background-image: url("../assets/arrow-down.png"),
+      linear-gradient(to right, $white, $white);
+    background-repeat: no-repeat, repeat;
+    background-position: 96% center, top left;
+  }
 }

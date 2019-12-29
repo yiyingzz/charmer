@@ -1,0 +1,24 @@
+@mixin cardColors($bgColor, $textColor) {
+  background: $bgColor;
+  color: $textColor;
+
+  a {
+    color: $pink;
+
+    &:hover,
+    &:focus {
+      color: $textColor;
+    }
+  }
+}
+
+@mixin buttonColors($bgColor, $textColor) {
+  background: $bgColor;
+  color: $textColor;
+
+  &:hover,
+  &:focus {
+    background: $textColor;
+    color: $bgColor;
+  }
+}
