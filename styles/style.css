@@ -416,7 +416,7 @@ footer p {
   text-align: center;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(50%, #600910), to(#000));
   background: linear-gradient(to bottom, #600910 50%, #000);
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
   left: 0;

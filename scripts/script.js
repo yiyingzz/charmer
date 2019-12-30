@@ -45,6 +45,45 @@ app.getRecipes = function(query) {
 /*
     METHODS
 */
+// method for using Promises in AJAX calls
+app.makeApiCalls = function(
+  usersGenreChoice,
+  moviePage,
+  movieReleaseDate,
+  usersFoodChoice
+) {
+  $.when(
+    app.getMovies(usersGenreChoice, moviePage, movieReleaseDate),
+    app.getRecipes(usersFoodChoice)
+  )
+    .then(function(movieChoices, recipeChoices) {
+      $(".loading-screen").hide();
+      $("h3").show();
+      $(".search-again").show();
+      $("footer").show();
+
+      $("html, body").animate(
+        {
+          scrollTop: $("#results").offset().top
+        },
+        500
+      );
+
+      // prep results for printing to page
+      app.prepMovieResults(movieChoices[0].results);
+      app.prepRecipeResults(recipeChoices[0].recipes);
+
+      $("#food-search").val(""); // reset inputs
+      $("#genre-search").val(28);
+    })
+    .fail(function(error) {
+      $(".loading-screen").hide();
+      app.showErrorMessage(
+        "Sorry, no results found! Please try another search."
+      );
+    });
+};
+
 // getting the current date so the movie API won't return unreleased movies
 app.setMovieReleaseDate = function() {
   const today = new Date();
@@ -52,42 +91,6 @@ app.setMovieReleaseDate = function() {
   const month = today.getMonth() + 1;
   const day = today.getDate() + 1;
   app.movieReleaseDate = `${year}-${month}-${day}`;
-};
-
-// method to print movies to page
-app.printMoviesToPage = function(movie, year, blurb) {
-  const movieHtml = `
-        <div class="movie-card flex-container" data-aos="fade-up" data-aos-duration="500">
-            <div class="movie-img">
-                <img src="${app.movieImgUrl}${movie.poster_path}" alt="Movie poster for ${movie.title}">
-            </div>
-            <div class="card-text">
-                <p class="card-title">${movie.title} <span class="movie-year">(${year})</span></p>
-                <p>${blurb}... <a href="${app.movieInfoUrl}${movie.id}">Read more</a></p>
-            </div>
-        </div>
-    `;
-  $(".movie-results").append(movieHtml);
-};
-
-// method to print recipes to page
-app.printRecipesToPage = function(recipe, readyTime, dishTypes, wines) {
-  const recipeHtml = `
-        <div class="recipe-card flex-container" data-aos="fade-up" data-aos-duration="500">
-            <div class="recipe-img">
-                <img src="${recipe.image}" alt="${recipe.title}">
-            </div>
-            <div class="card-text">
-                <p class="card-title">${recipe.title}</p>
-                <p>Ready in ${readyTime}</p>
-                <p>${recipe.analyzedInstructions[0].steps.length} steps, ${recipe.extendedIngredients.length} ingredients</p>
-                ${dishTypes}
-                ${wines}
-                <p><a href="${recipe.sourceUrl}">Go to recipe</a></p>
-            </div>
-        </div>
-    `;
-  $(".recipe-results").append(recipeHtml);
 };
 
 // method to get "ready in x min" info & convert to a readable format
@@ -146,12 +149,25 @@ app.getWinePairings = function(wineList) {
   }
 };
 
+// Shuffle the movie results using Fisher-Yates algorithm for more randomization
+app.shuffleMovieResults = function(movieResults) {
+  const newMoviesArray = [...movieResults];
+  for (let i = newMoviesArray.length - 1; i > 0; i--) {
+    const newIndex = Math.floor(Math.random() * (i + 1));
+    const currentMovie = newMoviesArray[i];
+    const movieToSwap = newMoviesArray[newIndex];
+    newMoviesArray[i] = movieToSwap;
+    newMoviesArray[newIndex] = currentMovie;
+  }
+  return newMoviesArray;
+};
+
 // method for prepping movie results for displaying them on the pate
 app.prepMovieResults = function(movieResults) {
-  console.log("it's working!");
   $(".movie-results").empty();
+  const shuffledMovies = app.shuffleMovieResults(movieResults);
   for (let i = 0; i < 4; i++) {
-    const movie = movieResults[i];
+    const movie = shuffledMovies[i];
     const movieYear = movie.release_date.slice(0, 4);
 
     // making the movie blurbs a bit shorter so they don't stretch the page
@@ -163,7 +179,6 @@ app.prepMovieResults = function(movieResults) {
 
 // method for prepping recipe results for displaying them on the page
 app.prepRecipeResults = function(recipeResults) {
-  console.log("it's working!2");
   $(".recipe-results").empty();
   for (let i = 0; i < 4; i++) {
     const recipe = recipeResults[i];
@@ -177,49 +192,19 @@ app.prepRecipeResults = function(recipeResults) {
   } // end of for loop - recipes
 };
 
-// method for using Promises in AJAX calls
-app.makeApiCalls = function(
-  usersGenreChoice,
-  moviePage,
-  movieReleaseDate,
-  usersFoodChoice
-) {
-  $.when(
-    app.getMovies(usersGenreChoice, moviePage, movieReleaseDate),
-    app.getRecipes(usersFoodChoice)
-  )
-    .then(function(movieChoices, recipeChoices) {
-      $(".loading-screen").hide();
-      $("h3").show();
-      $(".search-again").show();
-      $("footer").show();
-
-      $("html, body").animate(
-        {
-          scrollTop: $("#results").offset().top
-        },
-        500
-      );
-
-      // prep results for printing to page
-      app.prepMovieResults(movieChoices[0].results);
-      app.prepRecipeResults(recipeChoices[0].recipes);
-
-      $("#food-search").val(""); // reset inputs
-      $("#genre-search").val(28);
-    })
-    .fail(function(error) {
-      alert("Sorry, no results found! Please try another search.");
-    });
-};
-
 app.checkFormInputs = function(usersFoodChoice, usersGenreChoice) {
-  if (usersFoodChoice === "") {
-    alert("Please make sure you entered a recipe to search and a movie genre!");
+  // check for blank inputs
+  const inputChecker = RegExp(/\w/);
+  if (!inputChecker.test(usersFoodChoice)) {
+    app.showErrorMessage(
+      "Please make sure you entered a recipe to search for!"
+    );
   } else {
     $("h3").hide();
     $(".search-again").hide();
     $("footer").hide();
+    $(".movie-results").empty();
+    $(".recipe-results").empty();
     $(".loading-screen").show();
 
     // use Math.random() to add some randomization to the movie results
@@ -234,6 +219,48 @@ app.checkFormInputs = function(usersFoodChoice, usersGenreChoice) {
       usersFoodChoice
     );
   }
+};
+
+app.showErrorMessage = function(message) {
+  $(".error-message").text(message);
+};
+
+// method to print movies to page
+app.printMoviesToPage = function(movie, year, blurb) {
+  const movieHtml = `
+        <div class="movie-card flex-container" data-aos="fade-up" data-aos-duration="500">
+            <div class="movie-img">
+                <img src="${app.movieImgUrl}${movie.poster_path}" alt="Movie poster for ${movie.title}">
+            </div>
+            <div class="card-text">
+                <p class="card-title">${movie.title} <span class="movie-year">(${year})</span></p>
+                <p>${blurb}... <a href="${app.movieInfoUrl}${movie.id}" target="_blank"
+            rel="noopener noreferrer">Read more</a></p>
+            </div>
+        </div>
+    `;
+  $(".movie-results").append(movieHtml);
+};
+
+// method to print recipes to page
+app.printRecipesToPage = function(recipe, readyTime, dishTypes, wines) {
+  const recipeHtml = `
+        <div class="recipe-card flex-container" data-aos="fade-up" data-aos-duration="500">
+            <div class="recipe-img">
+                <img src="${recipe.image}" alt="${recipe.title}">
+            </div>
+            <div class="card-text">
+                <p class="card-title">${recipe.title}</p>
+                <p>Ready in ${readyTime}</p>
+                <p>${recipe.analyzedInstructions[0].steps.length} steps, ${recipe.extendedIngredients.length} ingredients</p>
+                ${dishTypes}
+                ${wines}
+                <p><a href="${recipe.sourceUrl}" target="_blank"
+            rel="noopener noreferrer">Go to recipe</a></p>
+            </div>
+        </div>
+    `;
+  $(".recipe-results").append(recipeHtml);
 };
 
 app.init = function() {
@@ -251,6 +278,7 @@ app.init = function() {
   // submit a search
   $("form").on("submit", function(e) {
     e.preventDefault();
+    $(".error-message").text(""); // clear error message
 
     // get user's choices
     app.usersFoodChoice = $("#food-search")
