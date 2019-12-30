@@ -3,7 +3,7 @@ const app = {};
 app.movieKey = "38f9a8f5c677f0356adca226f357b762";
 app.movieUrl = `https://api.themoviedb.org/3/discover/movie`;
 app.movieInfoUrl = `https://www.themoviedb.org/movie/`;
-app.movieImgUrl = `https://image.tmdb.org/t/p/w500`;
+app.movieImgUrl = `https://image.tmdb.org/t/p/w300`;
 
 app.recipeKey = `37d5d0c2cce74758b4307f9f5c729c0d`;
 app.recipeUrl = `https://api.spoonacular.com/recipes/random`;
