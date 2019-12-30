@@ -222,7 +222,9 @@ app.checkFormInputs = function(usersFoodChoice, usersGenreChoice) {
 };
 
 app.showErrorMessage = function(message) {
-  $(".error-message").text(message);
+  $(".error-message")
+    .show()
+    .text(message);
 };
 
 // method to print movies to page
@@ -271,6 +273,7 @@ app.init = function() {
   $(".search-again").hide();
   $("footer").hide();
   $(".loading-screen").hide();
+  $(".error-message").hide();
 
   /*
         EVENT HANDLERS
@@ -278,7 +281,9 @@ app.init = function() {
   // submit a search
   $("form").on("submit", function(e) {
     e.preventDefault();
-    $(".error-message").text(""); // clear error message
+    $(".error-message")
+      .hide()
+      .text(""); // clear error message
 
     // get user's choices
     app.usersFoodChoice = $("#food-search")
