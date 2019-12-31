@@ -134,7 +134,7 @@ app.getDishType = function(dishTypes) {
 app.getWinePairings = function(wineList) {
   const winePairingList = wineList;
   let wineString = `<p>Wine Pairing(s): `;
-  if (winePairingList === undefined) {
+  if (winePairingList === undefined || winePairingList.length === 0) {
     wineString = "";
     return wineString;
   } else {
