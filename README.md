@@ -6,10 +6,6 @@ A dinner &amp; movie date-planning app that allows users to search for recipes a
 
 View the live site at https://yiying.ca/charmer
 
-## Description
-
-This project was originally a pair programming project called "Food & A Flick", made with [Keil Martin](https://github.com/keilmart) for [Juno College](https://junocollege.com)'s Web Development Immersive bootcamp. After the bootcamp ended, I continued working on it to add some features & tweaks that we never got to in the original project due to time constraints.
-
 ## Functionality
 
 Users are able to:
@@ -22,7 +18,7 @@ Users are able to:
 - HTML5
 - CSS3, Sass
 - JavaScript, jQuery
-- Pair Programming
 - VS Code
 - [Animate on scroll](https://michalsnik.github.io/aos/)
+- Pair Programming with [Keil Martin](https://github.com/keilmart)
 - [TheMovieDB](themoviedb.org) & [Spoonacular](spoonacular.com) APIs
