@@ -88,8 +88,14 @@ app.makeApiCalls = function(
 app.setMovieReleaseDate = function() {
   const today = new Date();
   const year = today.getFullYear();
-  const month = today.getMonth() + 1;
-  const day = today.getDate() + 1;
+  let month = today.getMonth() + 1;
+  if (month.toString().length === 1) {
+    month = `0${month}`;
+  }
+  let day = today.getDate() + 1;
+  if (day.toString().length === 1) {
+    day = `0${day}`;
+  }
   app.movieReleaseDate = `${year}-${month}-${day}`;
 };
 
@@ -210,6 +216,8 @@ app.checkFormInputs = function(usersFoodChoice, usersGenreChoice) {
     // use Math.random() to add some randomization to the movie results
     const moviePage = Math.ceil(Math.random() * 100);
     app.setMovieReleaseDate();
+
+    app.getMovies(usersGenreChoice, moviePage, app.movieReleaseDate);
 
     // make API calls & then print results
     app.makeApiCalls(
