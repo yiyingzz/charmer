@@ -441,6 +441,62 @@ footer a:focus {
   margin-top: 0;
 }
 
+.error-modal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(50%, rgba(96, 9, 16, 0.7)), to(rgba(0, 0, 0, 0.7)));
+  background: linear-gradient(to bottom, rgba(96, 9, 16, 0.7) 50%, rgba(0, 0, 0, 0.7));
+}
+
+.error-modal-content {
+  width: 600px;
+  padding: 20px;
+  padding-top: 2px;
+  border-radius: 25px;
+  margin-bottom: 40px;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  text-align: center;
+  background: #fff;
+  color: #000;
+}
+
+.error-modal-content a {
+  color: #da3052;
+}
+
+.error-modal-content a:hover, .error-modal-content a:focus {
+  color: #000;
+}
+
+.error-modal-content p {
+  margin-top: 0;
+}
+
+.error-modal-button {
+  border: 2px solid #fff;
+}
+
+.error-modal-button:hover, .error-modal-button:focus {
+  border: 2px solid #000;
+}
+
+.error-modal-close {
+  text-align: right;
+}
+
+.error-modal-close a {
+  font-size: 1.8rem;
+  text-decoration: none;
+  font-weight: bold;
+}
+
 form {
   -webkit-box-align: center;
       -ms-flex-align: center;

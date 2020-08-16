@@ -78,7 +78,6 @@
             <!-- /.form-inputs -->
 
             <div class="button-container submit-button">
-              <p class="error-message"></p>
               <button type="submit">Submit</button>
             </p>
           </form>
@@ -119,7 +118,6 @@
           </div>
         </section>
         <!-- / #results -->
-        <!-- <span class="sr-only"><a href="#form">Back to search form</a></span> -->
       </main>
 
       <footer>
@@ -181,6 +179,19 @@
     </div>
 
     <div id="accessibility-read-text" class="sr-only" aria-live="polite" aria-atomic="assertive"></div>
+    </div>
+
+    <div class="error-modal" role="dialog">
+      <div class="error-modal-content">
+        <h3 class="sr-only">Error</h3>
+        <div class="error-modal-close" aria-hidden="true">
+          <a href="javascript:void(0)">&times;</a>
+        </div>
+        <p class="error-message">
+          No results found. Please try another search.
+        </p>
+        <button class="error-modal-button">Back to Search</button>
+      </div>
     </div>
 
     <!-- SCRIPTS -->

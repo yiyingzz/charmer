@@ -8,6 +8,9 @@ app.movieImgUrl = `https://image.tmdb.org/t/p/w300`;
 app.recipeKey = `37d5d0c2cce74758b4307f9f5c729c0d`;
 app.recipeUrl = `https://api.spoonacular.com/recipes/random`;
 
+app.noResultsError = "No results found. Please try another search.";
+app.foodInputError = "Please make sure you entered a recipe to search for!";
+
 /*
     AJAX CALLS
 */
@@ -82,12 +85,7 @@ app.makeApiCalls = function (
       } else {
         $(".loading-screen").hide();
         $("#results").hide();
-        app.showErrorMessage(
-          "Sorry, no results found! Please try another search."
-        );
-        setTimeout(function () {
-          $("#food-search")[0].focus();
-        }, 4000); // THIS IS NOT A GOOD SOLUTION
+        app.showErrorModal(app.noResultsError);
       }
 
       $("#food-search").val(""); // reset inputs
@@ -96,10 +94,7 @@ app.makeApiCalls = function (
     .fail(function (error) {
       $(".loading-screen").hide();
       $("#results").hide();
-      app.showErrorMessage(
-        "Sorry, no results found! Please try another search."
-      );
-      $("#food-search")[0].focus();
+      app.showErrorModal(app.noResultsError);
     });
 };
 
@@ -224,9 +219,7 @@ app.checkFormInputs = function (usersFoodChoice, usersGenreChoice) {
   // check for blank inputs
   const inputChecker = RegExp(/\w/);
   if (!inputChecker.test(usersFoodChoice)) {
-    app.showErrorMessage(
-      "Please make sure you entered a recipe to search for!"
-    );
+    app.showErrorModal(app.foodInputError);
   } else {
     $("h3").hide();
     $("#results").hide();
@@ -252,9 +245,10 @@ app.checkFormInputs = function (usersFoodChoice, usersGenreChoice) {
   }
 };
 
-app.showErrorMessage = function (message) {
-  $(".error-message").show().text(message);
-  app.readSrText(message);
+app.showErrorModal = function (message) {
+  $(".error-modal").show();
+  $(".error-message").text(message);
+  $(".error-modal")[0].focus();
 };
 
 // method to print movies to page
@@ -311,6 +305,12 @@ app.showHeartIcon = function (currentIcon) {
   $(".icon").addClass("fa-heart");
 };
 
+// close error modal & return focus
+app.closeErrorModal = function () {
+  $(".error-modal").hide();
+  $("#food-search")[0].focus();
+};
+
 // accessibility - read text for screenreaders
 app.readSrText = function (text) {
   $("#accessibility-read-text").text(""); //clear existing text
@@ -325,10 +325,9 @@ app.init = function () {
     */
   $("h3").hide();
   $("#results").hide();
-  //$(".search-again").hide();
   $("footer").hide();
   $(".loading-screen").hide();
-  $(".error-message").hide();
+  $(".error-modal").hide();
   $("#accessibility-results-heading").hide();
 
   /*
@@ -337,7 +336,6 @@ app.init = function () {
   // submit a search
   $("form").on("submit", function (e) {
     e.preventDefault();
-    $(".error-message").hide().text(""); // clear error message
 
     // get user's choices
     app.usersFoodChoice = $("#food-search").val().toLowerCase();
@@ -378,6 +376,15 @@ app.init = function () {
       1000
     );
     $("#food-search")[0].focus();
+  });
+
+  // close error modal
+  $(".error-modal-button, .error-modal-close").on("click", app.closeErrorModal);
+
+  $(".error-modal").on("click", function (e) {
+    if (e.target === $(".error-modal")[0]) {
+      app.closeErrorModal();
+    }
   });
 }; // end of app.init()
 
