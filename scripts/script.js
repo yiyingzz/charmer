@@ -11,7 +11,7 @@ app.recipeUrl = `https://api.spoonacular.com/recipes/random`;
 /*
     AJAX CALLS
 */
-app.getMovies = function(query, page, releaseDate) {
+app.getMovies = function (query, page, releaseDate) {
   return $.ajax({
     url: app.movieUrl,
     method: "GET",
@@ -26,7 +26,7 @@ app.getMovies = function(query, page, releaseDate) {
   });
 };
 
-app.getRecipes = function(query) {
+app.getRecipes = function (query) {
   return $.ajax({
     url: app.recipeUrl,
     method: "GET",
@@ -46,7 +46,7 @@ app.getRecipes = function(query) {
     METHODS
 */
 // method for using Promises in AJAX calls
-app.makeApiCalls = function(
+app.makeApiCalls = function (
   usersGenreChoice,
   moviePage,
   movieReleaseDate,
@@ -56,36 +56,55 @@ app.makeApiCalls = function(
     app.getMovies(usersGenreChoice, moviePage, movieReleaseDate),
     app.getRecipes(usersFoodChoice)
   )
-    .then(function(movieChoices, recipeChoices) {
-      $(".loading-screen").hide();
-      $("h3").show();
-      $(".search-again").show();
-      $("footer").show();
+    .then(function (movieChoices, recipeChoices) {
+      if (
+        movieChoices[0].results.length > 0 &&
+        recipeChoices[0].recipes.length > 0
+      ) {
+        $(".loading-screen").hide();
+        $("h3").show();
+        $("#results").show();
+        //$(".search-again").show();
+        $("footer").show();
+        $("#accessibility-results-heading").show();
+        app.readSrText("");
 
-      $("html, body").animate(
-        {
-          scrollTop: $("#results").offset().top
-        },
-        500
-      );
+        $("html, body").animate(
+          {
+            scrollTop: $("#results").offset().top
+          },
+          500
+        );
 
-      // prep results for printing to page
-      app.prepMovieResults(movieChoices[0].results);
-      app.prepRecipeResults(recipeChoices[0].recipes);
+        // prep results for printing to page
+        app.prepMovieResults(movieChoices[0].results);
+        app.prepRecipeResults(recipeChoices[0].recipes);
+      } else {
+        $(".loading-screen").hide();
+        $("#results").hide();
+        app.showErrorMessage(
+          "Sorry, no results found! Please try another search."
+        );
+        setTimeout(function () {
+          $("#food-search")[0].focus();
+        }, 4000); // THIS IS NOT A GOOD SOLUTION
+      }
 
       $("#food-search").val(""); // reset inputs
       $("#genre-search").val(28);
     })
-    .fail(function(error) {
+    .fail(function (error) {
       $(".loading-screen").hide();
+      $("#results").hide();
       app.showErrorMessage(
         "Sorry, no results found! Please try another search."
       );
+      $("#food-search")[0].focus();
     });
 };
 
 // getting the current date so the movie API won't return unreleased movies
-app.setMovieReleaseDate = function() {
+app.setMovieReleaseDate = function () {
   const today = new Date();
   const year = today.getFullYear();
   let month = today.getMonth() + 1;
@@ -100,7 +119,7 @@ app.setMovieReleaseDate = function() {
 };
 
 // method to get "ready in x min" info & convert to a readable format
-app.getRecipeReadyTime = function(recipeTimeData) {
+app.getRecipeReadyTime = function (recipeTimeData) {
   if (recipeTimeData < 60) {
     const readyTimeString = `${recipeTimeData} minutes`;
     return readyTimeString;
@@ -118,7 +137,7 @@ app.getRecipeReadyTime = function(recipeTimeData) {
 };
 
 // method to get dish types
-app.getDishType = function(dishTypes) {
+app.getDishType = function (dishTypes) {
   const dishTypeList = dishTypes;
   let dishTypeString = `<p>Dish Type(s): `;
   if (dishTypeList == false) {
@@ -137,7 +156,7 @@ app.getDishType = function(dishTypes) {
 };
 
 // method to get wine pairings
-app.getWinePairings = function(wineList) {
+app.getWinePairings = function (wineList) {
   const winePairingList = wineList;
   let wineString = `<p>Wine Pairing(s): `;
   if (winePairingList === undefined || winePairingList.length === 0) {
@@ -156,7 +175,7 @@ app.getWinePairings = function(wineList) {
 };
 
 // Shuffle the movie results using Fisher-Yates algorithm for more randomization
-app.shuffleMovieResults = function(movieResults) {
+app.shuffleMovieResults = function (movieResults) {
   const newMoviesArray = [...movieResults];
   for (let i = newMoviesArray.length - 1; i > 0; i--) {
     const newIndex = Math.floor(Math.random() * (i + 1));
@@ -169,7 +188,7 @@ app.shuffleMovieResults = function(movieResults) {
 };
 
 // method for prepping movie results for displaying them on the pate
-app.prepMovieResults = function(movieResults) {
+app.prepMovieResults = function (movieResults) {
   $(".movie-results").empty();
   const shuffledMovies = app.shuffleMovieResults(movieResults);
   for (let i = 0; i < 4; i++) {
@@ -184,7 +203,7 @@ app.prepMovieResults = function(movieResults) {
 };
 
 // method for prepping recipe results for displaying them on the page
-app.prepRecipeResults = function(recipeResults) {
+app.prepRecipeResults = function (recipeResults) {
   $(".recipe-results").empty();
   for (let i = 0; i < 4; i++) {
     const recipe = recipeResults[i];
@@ -192,13 +211,16 @@ app.prepRecipeResults = function(recipeResults) {
 
     // get dish types & wine pairings for each recipe, if available
     const dishTypeHtml = app.getDishType(recipe.dishTypes);
-    const wineHtml = app.getWinePairings(recipe.winePairing.pairedWines);
+    let wineHtml = "";
+    if (recipe.winePairing !== undefined) {
+      wineHtml = app.getWinePairings(recipe.winePairing.pairedWines);
+    }
 
     app.printRecipesToPage(recipe, readyTime, dishTypeHtml, wineHtml);
   } // end of for loop - recipes
 };
 
-app.checkFormInputs = function(usersFoodChoice, usersGenreChoice) {
+app.checkFormInputs = function (usersFoodChoice, usersGenreChoice) {
   // check for blank inputs
   const inputChecker = RegExp(/\w/);
   if (!inputChecker.test(usersFoodChoice)) {
@@ -207,7 +229,7 @@ app.checkFormInputs = function(usersFoodChoice, usersGenreChoice) {
     );
   } else {
     $("h3").hide();
-    $(".search-again").hide();
+    $("#results").hide();
     $("footer").hide();
     $(".movie-results").empty();
     $(".recipe-results").empty();
@@ -218,6 +240,7 @@ app.checkFormInputs = function(usersFoodChoice, usersGenreChoice) {
     app.setMovieReleaseDate();
 
     app.getMovies(usersGenreChoice, moviePage, app.movieReleaseDate);
+    app.readSrText("Loading your results");
 
     // make API calls & then print results
     app.makeApiCalls(
@@ -229,116 +252,136 @@ app.checkFormInputs = function(usersFoodChoice, usersGenreChoice) {
   }
 };
 
-app.showErrorMessage = function(message) {
-  $(".error-message")
-    .show()
-    .text(message);
+app.showErrorMessage = function (message) {
+  $(".error-message").show().text(message);
+  app.readSrText(message);
 };
 
 // method to print movies to page
-app.printMoviesToPage = function(movie, year, blurb) {
+app.printMoviesToPage = function (movie, year, blurb) {
   const movieHtml = `
-        <div class="movie-card flex-container" data-aos="fade-up" data-aos-duration="500">
-            <div class="movie-img">
-                <img src="${app.movieImgUrl}${movie.poster_path}" alt="Movie poster for ${movie.title}">
-            </div>
-            <div class="card-text">
-                <p class="card-title">${movie.title} <span class="movie-year">(${year})</span></p>
-                <p>${blurb}... <a href="${app.movieInfoUrl}${movie.id}" target="_blank"
-            rel="noopener noreferrer">Read more</a></p>
-            </div>
-        </div>
+      <li class="movie-card flex-container" data-aos="fade-up" data-aos-duration="500">
+          <div class="movie-img">
+              <img src="${app.movieImgUrl}${movie.poster_path}" alt="">
+          </div>
+          <div class="card-text">
+              <h4 class="card-title">${movie.title} <span class="movie-year">(${year})</span></h4>
+              <p>${blurb}... <a href="${app.movieInfoUrl}${movie.id}" target="_blank"
+          rel="noopener noreferrer">Read more</a></p>
+          </div>
+      </li>
     `;
   $(".movie-results").append(movieHtml);
 };
 
 // method to print recipes to page
-app.printRecipesToPage = function(recipe, readyTime, dishTypes, wines) {
+app.printRecipesToPage = function (recipe, readyTime, dishTypes, wines) {
   const recipeHtml = `
-        <div class="recipe-card flex-container" data-aos="fade-up" data-aos-duration="500">
-            <div class="recipe-img">
-                <img src="${recipe.image}" alt="${recipe.title}">
-            </div>
-            <div class="card-text">
-                <p class="card-title">${recipe.title}</p>
-                <p>Ready in ${readyTime}</p>
-                <p>${recipe.analyzedInstructions[0].steps.length} steps, ${recipe.extendedIngredients.length} ingredients</p>
-                ${dishTypes}
-                ${wines}
-                <p><a href="${recipe.sourceUrl}" target="_blank"
-            rel="noopener noreferrer">Go to recipe</a></p>
-            </div>
-        </div>
+      <li class="recipe-card flex-container" data-aos="fade-up" data-aos-duration="500">
+          <div class="recipe-img">
+              <img src="${recipe.image}" alt="">
+          </div>
+          <div class="card-text">
+              <h4 class="card-title">${recipe.title}</h4>
+              <p>Ready in ${readyTime}</p>
+              <p>${recipe.analyzedInstructions[0].steps.length} steps, ${recipe.extendedIngredients.length} ingredients</p>
+              ${dishTypes}
+              ${wines}
+              <p><a href="${recipe.sourceUrl}" target="_blank"
+          rel="noopener noreferrer">Go to recipe</a></p>
+          </div>
+      </li>
     `;
   $(".recipe-results").append(recipeHtml);
 };
 
-app.init = function() {
+// icon change
+app.showUtensilsIcon = function () {
+  $(".icon").removeClass("fa-heart");
+  $(".icon").addClass("fa-utensils");
+};
+
+app.showMoviesIcon = function () {
+  $(".icon").removeClass("fa-heart");
+  $(".icon").addClass("fa-film");
+};
+
+app.showHeartIcon = function (currentIcon) {
+  $(".icon").removeClass(currentIcon);
+  $(".icon").addClass("fa-heart");
+};
+
+// accessibility - read text for screenreaders
+app.readSrText = function (text) {
+  $("#accessibility-read-text").text(""); //clear existing text
+  setTimeout(function () {
+    $("#accessibility-read-text").text(text);
+  }, 50);
+};
+
+app.init = function () {
   /*
         METHODS THAT NEED TO INITIALIZE
     */
   $("h3").hide();
-  $(".search-again").hide();
+  $("#results").hide();
+  //$(".search-again").hide();
   $("footer").hide();
   $(".loading-screen").hide();
   $(".error-message").hide();
+  $("#accessibility-results-heading").hide();
 
   /*
         EVENT HANDLERS
     */
   // submit a search
-  $("form").on("submit", function(e) {
+  $("form").on("submit", function (e) {
     e.preventDefault();
-    $(".error-message")
-      .hide()
-      .text(""); // clear error message
+    $(".error-message").hide().text(""); // clear error message
 
     // get user's choices
-    app.usersFoodChoice = $("#food-search")
-      .val()
-      .toLowerCase();
+    app.usersFoodChoice = $("#food-search").val().toLowerCase();
     app.usersGenreChoice = parseInt($("#genre-search").val());
 
     // make sure the user has made choices & didn't leave a blank input
     app.checkFormInputs(app.usersFoodChoice, app.usersGenreChoice);
   }); // end of form submit event handler
 
-  // changing the heart icon to utensils on hover when searching recipes
-  $(".food-search-container").hover(
-    function() {
-      $(".icon").removeClass("fa-heart");
-      $(".icon").addClass("fa-utensils");
-    },
-    function() {
-      $(".icon").removeClass("fa-utensils");
-      $(".icon").addClass("fa-heart");
-    }
-  );
+  // changing the heart icon to utensils on hover/focus when searching recipes
+  $(".food-search-container").hover(app.showUtensilsIcon, function () {
+    app.showHeartIcon("fa-utensils");
+  });
 
-  // changing the heart icon to film on hover when searching movies
-  $(".genre-search-container").hover(
-    function() {
-      $(".icon").removeClass("fa-heart");
-      $(".icon").addClass("fa-film");
-    },
-    function() {
-      $(".icon").removeClass("fa-film");
-      $(".icon").addClass("fa-heart");
-    }
-  );
+  $("#food-search")
+    .focusin(app.showUtensilsIcon)
+    .focusout(function () {
+      app.showHeartIcon("fa-utensils");
+    });
+
+  // changing the heart icon to film on hover/focus when searching movies
+  $(".genre-search-container").hover(app.showMoviesIcon, function () {
+    app.showHeartIcon("fa-film");
+  });
+
+  $("#genre-search")
+    .focusin(app.showMoviesIcon)
+    .focusout(function () {
+      app.showHeartIcon("fa-film");
+    });
 
   // smooth scrolling up to search again
-  $(".search-again-button").on("click", function() {
+  $(".search-again-button").on("click", function () {
     $("html, body").animate(
       {
         scrollTop: $("#landing").offset().top
       },
       1000
     );
+    $("#food-search")[0].focus();
   });
 }; // end of app.init()
 
-$(function() {
+$(function () {
   AOS.init(); // animate on scroll
   app.init();
 });

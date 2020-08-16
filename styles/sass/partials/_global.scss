@@ -58,6 +58,12 @@ h3 {
   margin-bottom: 20px;
 }
 
+ul,
+li {
+  padding-left: 0;
+  list-style: none;
+}
+
 a {
   color: $white;
   font-weight: bold;
@@ -136,6 +142,13 @@ footer {
   p {
     font-size: 0.8rem;
     margin: 0;
+  }
+
+  a:hover,
+  a:focus {
+    background: $white;
+    color: $pink;
+    text-decoration: none;
   }
 }
 

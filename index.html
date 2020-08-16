@@ -30,7 +30,8 @@
         </header>
 
         <section id="form">
-          <form>
+          <form tabindex="-1">
+            <span class="sr-only">Search for a recipe using a keyword of your choice and search for a movie using the genre of your choice. You'll be presented with 4 recipes and 4 movies based on your search.</span>
             <div class="form-inputs flex-container">
               <div class="food-search-container">
                 <label for="food-search">Find some yummy recipes!</label>
@@ -47,10 +48,10 @@
                 class="fa-stack flex-container"
                 style="vertical-align: top;"
               >
-                <i class="fas fa-circle fa-stack-1x" aria-hidden></i>
+                <i class="fas fa-circle fa-stack-1x" aria-hidden="true"></i>
                 <i
                   class="icon fas fa-heart fa-stack-2x fa-inverse"
-                  aria-hidden
+                  aria-hidden="true"
                 ></i>
               </span>
 
@@ -91,20 +92,24 @@
     <div class="wrapper">
       <main>
         <section id="results" class="flex-container">
+          <span class="sr-only" id="accessibility-results-heading">
+            <h2>Results</h2> 
+            All links on this page open in a new tab.
+          </span>
           <section id="recipes" class="results-container flex-container">
             <h3>Recipes</h3>
-            <div class="recipe-results flex-container">
+            <ul class="recipe-results flex-container">
               <!-- recipe results append here -->
-            </div>
+            </ul>
             <!-- /.recipe-results -->
           </section>
           <!-- / #recipes -->
 
           <section id="movies" class="results-container flex-container">
             <h3>Movies</h3>
-            <div class="movie-results flex-container">
+            <ul class="movie-results flex-container">
               <!-- movie results append here -->
-            </div>
+            </ul>
             <!-- /.movie-results -->
           </section>
           <!-- / #movies -->
@@ -114,6 +119,7 @@
           </div>
         </section>
         <!-- / #results -->
+        <!-- <span class="sr-only"><a href="#form">Back to search form</a></span> -->
       </main>
 
       <footer>
@@ -167,11 +173,14 @@
     </div>
     <!-- /.wrapper -->
 
-    <div class="loading-screen flex-container">
+    <div class="loading-screen flex-container" aria-hidden="true">
       <div class="loading-message">
         <img src="./assets/heart-loader.svg" />
         <p>Loading your results...</p>
       </div>
+    </div>
+
+    <div id="accessibility-read-text" class="sr-only" aria-live="polite" aria-atomic="assertive"></div>
     </div>
 
     <!-- SCRIPTS -->
