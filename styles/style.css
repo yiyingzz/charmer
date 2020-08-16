@@ -427,8 +427,8 @@ footer a:focus {
       -ms-flex-align: center;
           align-items: center;
   text-align: center;
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(50%, #600910), to(#000));
-  background: linear-gradient(to bottom, #600910 50%, #000);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(50%, rgba(96, 9, 16, 0.9)), to(rgba(0, 0, 0, 0.9)));
+  background: linear-gradient(to bottom, rgba(96, 9, 16, 0.9) 50%, rgba(0, 0, 0, 0.9));
   position: fixed;
   top: 0;
   bottom: 0;
@@ -447,8 +447,8 @@ footer a:focus {
   bottom: 0;
   left: 0;
   right: 0;
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(50%, rgba(96, 9, 16, 0.7)), to(rgba(0, 0, 0, 0.7)));
-  background: linear-gradient(to bottom, rgba(96, 9, 16, 0.7) 50%, rgba(0, 0, 0, 0.7));
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(50%, rgba(96, 9, 16, 0.8)), to(rgba(0, 0, 0, 0.8)));
+  background: linear-gradient(to bottom, rgba(96, 9, 16, 0.8) 50%, rgba(0, 0, 0, 0.8));
 }
 
 .error-modal-content {
@@ -475,12 +475,25 @@ footer a:focus {
   color: #000;
 }
 
+@media (max-width: 700px) {
+  .error-modal-content {
+    width: 300px;
+  }
+}
+
 .error-modal-content p {
   margin-top: 0;
 }
 
 .error-modal-button {
   border: 2px solid #fff;
+}
+
+@media (max-width: 700px) {
+  .error-modal-button {
+    padding: 15px;
+    width: 100%;
+  }
 }
 
 .error-modal-button:hover, .error-modal-button:focus {

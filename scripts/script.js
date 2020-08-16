@@ -67,7 +67,6 @@ app.makeApiCalls = function (
         $(".loading-screen").hide();
         $("h3").show();
         $("#results").show();
-        //$(".search-again").show();
         $("footer").show();
         $("#accessibility-results-heading").show();
         app.readSrText("");
@@ -85,6 +84,7 @@ app.makeApiCalls = function (
       } else {
         $(".loading-screen").hide();
         $("#results").hide();
+        $("footer").hide();
         app.showErrorModal(app.noResultsError);
       }
 
@@ -94,6 +94,7 @@ app.makeApiCalls = function (
     .fail(function (error) {
       $(".loading-screen").hide();
       $("#results").hide();
+      $("footer").hide();
       app.showErrorModal(app.noResultsError);
     });
 };

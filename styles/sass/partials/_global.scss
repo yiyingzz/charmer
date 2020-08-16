@@ -164,7 +164,11 @@ footer {
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: linear-gradient(to bottom, $darkRed 50%, $black);
+  background: linear-gradient(
+    to bottom,
+    rgba(96, 9, 16, 0.9) 50%,
+    rgba(0, 0, 0, 0.9)
+  );
   position: fixed;
   top: 0;
   bottom: 0;
@@ -186,8 +190,8 @@ footer {
   right: 0;
   background: linear-gradient(
     to bottom,
-    rgba(96, 9, 16, 0.7) 50%,
-    rgba(0, 0, 0, 0.7)
+    rgba(96, 9, 16, 0.8) 50%,
+    rgba(0, 0, 0, 0.8)
   );
 
   &-content {
@@ -203,6 +207,10 @@ footer {
     text-align: center;
     @include cardColors($white, $black);
 
+    @media (max-width: 700px) {
+      width: 300px;
+    }
+
     p {
       margin-top: 0;
     }
@@ -210,6 +218,11 @@ footer {
 
   &-button {
     border: 2px solid $white;
+
+    @media (max-width: 700px) {
+      padding: 15px;
+      width: 100%;
+    }
 
     &:hover,
     &:focus {
