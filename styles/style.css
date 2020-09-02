@@ -729,6 +729,14 @@ select:hover, select:focus {
           filter: invert(0.28) sepia(0.56) saturate(36.73) hue-rotate(331deg) brightness(0.89) contrast(0.91);
 }
 
+@media (max-width: 1200px) {
+  .movie-img .placeholder-img,
+  .recipe-img .placeholder-img {
+    height: 150px;
+    margin: 10px auto 0;
+  }
+}
+
 .recipe-img {
   height: 220px;
 }
@@ -755,6 +763,17 @@ select:hover, select:focus {
   width: 100%;
   -o-object-fit: unset;
      object-fit: unset;
+  -webkit-transform: scale(0.8);
+          transform: scale(0.8);
+  position: relative;
+  top: -13px;
+  left: -5px;
+}
+
+@media (max-width: 1200px) {
+  .recipe-img .placeholder-img {
+    top: 0;
+  }
 }
 
 .card-text {
