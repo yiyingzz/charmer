@@ -723,6 +723,12 @@ select:hover, select:focus {
   }
 }
 
+.movie-img .placeholder-img,
+.recipe-img .placeholder-img {
+  -webkit-filter: invert(0.28) sepia(0.56) saturate(36.73) hue-rotate(331deg) brightness(0.89) contrast(0.91);
+          filter: invert(0.28) sepia(0.56) saturate(36.73) hue-rotate(331deg) brightness(0.89) contrast(0.91);
+}
+
 .recipe-img {
   height: 220px;
 }
@@ -743,6 +749,12 @@ select:hover, select:focus {
   .recipe-img img {
     height: auto;
   }
+}
+
+.recipe-img .placeholder-img {
+  width: 100%;
+  -o-object-fit: unset;
+     object-fit: unset;
 }
 
 .card-text {

@@ -257,7 +257,8 @@ app.printMoviesToPage = function (movie, year, blurb) {
   const movieHtml = `
       <li class="movie-card flex-container" data-aos="fade-up" data-aos-duration="500">
           <div class="movie-img">
-              <img src="${app.movieImgUrl}${movie.poster_path}" alt="">
+              <img src="./assets/film-solid.svg" class="placeholder-img" alt="">
+              <!--<img src="${app.movieImgUrl}${movie.poster_path}" alt="">-->
           </div>
           <div class="card-text">
               <h4 class="card-title">${movie.title} <span class="movie-year">(${year})</span></h4>
@@ -274,7 +275,8 @@ app.printRecipesToPage = function (recipe, readyTime, dishTypes, wines) {
   const recipeHtml = `
       <li class="recipe-card flex-container" data-aos="fade-up" data-aos-duration="500">
           <div class="recipe-img">
-              <img src="${recipe.image}" alt="">
+              <img src="./assets/utensils-solid.svg" class="placeholder-img" alt="">
+              <!--<img src="${recipe.image}" alt="">-->
           </div>
           <div class="card-text">
               <h4 class="card-title">${recipe.title}</h4>
