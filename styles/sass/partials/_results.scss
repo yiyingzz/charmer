@@ -53,6 +53,16 @@
       border-radius: 0;
     }
   }
+
+  .placeholder-img {
+    filter: invert(0.28) sepia(0.56) saturate(36.73) hue-rotate(331deg)
+      brightness(0.89) contrast(0.91);
+
+    @media (max-width: 1200px) {
+      height: 150px;
+      margin: 10px auto 0;
+    }
+  }
 }
 
 .recipe-img {
@@ -68,6 +78,19 @@
 
     @media (max-width: 1200px) {
       height: auto;
+    }
+  }
+
+  .placeholder-img {
+    width: 100%;
+    object-fit: unset;
+    transform: scale(0.8);
+    position: relative;
+    top: -13px;
+    left: -5px;
+
+    @media (max-width: 1200px) {
+      top: 0;
     }
   }
 }
