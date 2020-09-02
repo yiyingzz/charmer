@@ -170,6 +170,30 @@ app.getWinePairings = function (wineList) {
   }
 };
 
+app.getMoviePosterHtml = function (movie) {
+  let html = `
+    <img src="${app.movieImgUrl}${movie.poster_path}" alt="">
+  `;
+  if (!movie.poster_path) {
+    html = `
+      <img src="./assets/film-solid.svg" class="placeholder-img" alt="">  
+    `;
+  }
+  return html;
+};
+
+app.getRecipeImgHtml = function (recipe) {
+  let html = `
+    <img src="${recipe.image}" alt="">
+  `;
+  if (!recipe.image) {
+    html = `
+      <img src="./assets/utensils-solid.svg" class="placeholder-img" alt="">  
+    `;
+  }
+  return html;
+};
+
 // Shuffle the movie results using Fisher-Yates algorithm for more randomization
 app.shuffleMovieResults = function (movieResults) {
   const newMoviesArray = [...movieResults];
@@ -193,8 +217,9 @@ app.prepMovieResults = function (movieResults) {
 
     // making the movie blurbs a bit shorter so they don't stretch the page
     const movieBlurb = movie.overview.slice(0, 241);
+    const moviePosterHtml = app.getMoviePosterHtml(movie);
 
-    app.printMoviesToPage(movie, movieYear, movieBlurb);
+    app.printMoviesToPage(movie, movieYear, movieBlurb, moviePosterHtml);
   } // end of for loop - movies
 };
 
@@ -211,8 +236,15 @@ app.prepRecipeResults = function (recipeResults) {
     if (recipe.winePairing !== undefined) {
       wineHtml = app.getWinePairings(recipe.winePairing.pairedWines);
     }
+    const recipeImgHtml = app.getRecipeImgHtml(recipe);
 
-    app.printRecipesToPage(recipe, readyTime, dishTypeHtml, wineHtml);
+    app.printRecipesToPage(
+      recipe,
+      readyTime,
+      dishTypeHtml,
+      wineHtml,
+      recipeImgHtml
+    );
   } // end of for loop - recipes
 };
 
@@ -253,12 +285,11 @@ app.showErrorModal = function (message) {
 };
 
 // method to print movies to page
-app.printMoviesToPage = function (movie, year, blurb) {
+app.printMoviesToPage = function (movie, year, blurb, imgHtml) {
   const movieHtml = `
       <li class="movie-card flex-container" data-aos="fade-up" data-aos-duration="500">
           <div class="movie-img">
-              <img src="./assets/film-solid.svg" class="placeholder-img" alt="">
-              <!--<img src="${app.movieImgUrl}${movie.poster_path}" alt="">-->
+              ${imgHtml}
           </div>
           <div class="card-text">
               <h4 class="card-title">${movie.title} <span class="movie-year">(${year})</span></h4>
@@ -271,21 +302,26 @@ app.printMoviesToPage = function (movie, year, blurb) {
 };
 
 // method to print recipes to page
-app.printRecipesToPage = function (recipe, readyTime, dishTypes, wines) {
+app.printRecipesToPage = function (
+  recipe,
+  readyTime,
+  dishTypes,
+  wines,
+  imgHtml
+) {
   const recipeHtml = `
       <li class="recipe-card flex-container" data-aos="fade-up" data-aos-duration="500">
           <div class="recipe-img">
-              <img src="./assets/utensils-solid.svg" class="placeholder-img" alt="">
-              <!--<img src="${recipe.image}" alt="">-->
+            ${imgHtml}
           </div>
           <div class="card-text">
-              <h4 class="card-title">${recipe.title}</h4>
-              <p>Ready in ${readyTime}</p>
-              <p>${recipe.analyzedInstructions[0].steps.length} steps, ${recipe.extendedIngredients.length} ingredients</p>
-              ${dishTypes}
-              ${wines}
-              <p><a href="${recipe.sourceUrl}" target="_blank"
-          rel="noopener noreferrer">Go to recipe</a></p>
+            <h4 class="card-title">${recipe.title}</h4>
+            <p>Ready in ${readyTime}</p>
+            <p>${recipe.analyzedInstructions[0].steps.length} steps, ${recipe.extendedIngredients.length} ingredients</p>
+            ${dishTypes}
+            ${wines}
+            <p><a href="${recipe.sourceUrl}" target="_blank"
+        rel="noopener noreferrer">Go to recipe</a></p>
           </div>
       </li>
     `;
