@@ -172,11 +172,11 @@ app.getWinePairings = function (wineList) {
 
 app.getMoviePosterHtml = function (movie) {
   let html = `
-    <img src="${app.movieImgUrl}${movie.poster_path}" alt="">
+    <img src="./assets/film-solid.svg" class="placeholder-img" alt="">
   `;
-  if (!movie.poster_path) {
+  if (movie.poster_path) {
     html = `
-      <img src="./assets/film-solid.svg" class="placeholder-img" alt="">  
+      <img src="${app.movieImgUrl}${movie.poster_path}" alt="">
     `;
   }
   return html;
@@ -184,11 +184,11 @@ app.getMoviePosterHtml = function (movie) {
 
 app.getRecipeImgHtml = function (recipe) {
   let html = `
-    <img src="${recipe.image}" alt="">
+    <img src="./assets/utensils-solid.svg" class="placeholder-img" alt="">  
   `;
-  if (!recipe.image) {
+  if (recipe.image) {
     html = `
-      <img src="./assets/utensils-solid.svg" class="placeholder-img" alt="">  
+      <img src="${recipe.image}" alt="">
     `;
   }
   return html;
@@ -309,6 +309,11 @@ app.printRecipesToPage = function (
   wines,
   imgHtml
 ) {
+  console.log(recipe.analyzedInstructions);
+  let recipeSteps = "";
+  if (recipe.analyzedInstructions.length > 0) {
+    recipeSteps = `${recipe.analyzedInstructions[0].steps.length} steps, `;
+  }
   const recipeHtml = `
       <li class="recipe-card flex-container" data-aos="fade-up" data-aos-duration="500">
           <div class="recipe-img">
@@ -317,7 +322,7 @@ app.printRecipesToPage = function (
           <div class="card-text">
             <h4 class="card-title">${recipe.title}</h4>
             <p>Ready in ${readyTime}</p>
-            <p>${recipe.analyzedInstructions[0].steps.length} steps, ${recipe.extendedIngredients.length} ingredients</p>
+            <p>${recipeSteps}${recipe.extendedIngredients.length} ingredients</p>
             ${dishTypes}
             ${wines}
             <p><a href="${recipe.sourceUrl}" target="_blank"
