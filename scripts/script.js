@@ -309,7 +309,6 @@ app.printRecipesToPage = function (
   wines,
   imgHtml
 ) {
-  console.log(recipe.analyzedInstructions);
   let recipeSteps = "";
   if (recipe.analyzedInstructions.length > 0) {
     recipeSteps = `${recipe.analyzedInstructions[0].steps.length} steps, `;
