@@ -226,8 +226,16 @@ app.prepMovieResults = function (movieResults) {
 // method for prepping recipe results for displaying them on the page
 app.prepRecipeResults = function (recipeResults) {
   $(".recipe-results").empty();
-  for (let i = 0; i < 4; i++) {
-    const recipe = recipeResults[i];
+
+  let recipesList;
+  if (recipeResults.length >= 4) {
+    recipesList = recipeResults.slice(0, 4);
+  } else {
+    recipesList = recipeResults;
+  }
+
+  for (let i = 0; i < recipesList.length; i++) {
+    const recipe = recipesList[i];
     const readyTime = app.getRecipeReadyTime(recipe.readyInMinutes);
 
     // get dish types & wine pairings for each recipe, if available
@@ -245,7 +253,7 @@ app.prepRecipeResults = function (recipeResults) {
       wineHtml,
       recipeImgHtml
     );
-  } // end of for loop - recipes
+  }
 };
 
 app.checkFormInputs = function (usersFoodChoice, usersGenreChoice) {
